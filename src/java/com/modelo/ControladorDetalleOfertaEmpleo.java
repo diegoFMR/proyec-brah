@@ -22,6 +22,181 @@ public class ControladorDetalleOfertaEmpleo extends Conexion{
     static int idEstudiosuperior=0;
     static int idIdiomaOferta=0;
     
+   public ArrayList<OfertaEmpleo> mostrarOfertaDinamica(String tabla, String atributo, String valor){
+        ResultSet rs; 
+        ArrayList<OfertaEmpleo> lista = new ArrayList();
+        
+        try{
+            this.conectar();
+            
+            String sql="select idOfertaEmpleo, detalleofertaempleo.idDetalleOfertaEmpleo," +
+            " detalleofertaempleo.descripcionPuesto,categoria.idCategoria as idCategoria, categoria.nombreCategoria as categoria," +
+            " cargo.idCargo as idCargo, cargo.nombreCargo," +
+            " pais.idPais as idPais, pais.pais," +
+            " departamento.idDepartamento as idDepartamento, departamento.departamento," +
+            " detalleofertaempleo.numVacantes as numVacantes, detalleofertaempleo.genero as genero," +
+            " detalleofertaempleo.edad as edad, detalleofertaempleo.aniosExperiencia as anioExperiencia," +
+            " detalleofertaempleo.candidatoVehiculo candidatoV, detalleofertaempleo.descripcionPuesto descripcion," +
+            " tipocontratacion.idTipoContratacion idTipoContratacion, tipocontratacion.tipoContratacion tipoContratacion," +
+            " detalleofertaempleo.salarioMin salarioMin, detalleofertaempleo.salarioMax," +
+            " tipopago.idTipoPago, tipopago.tipoPago tipoPago," +
+            " idiomanivel.idIdiomaNivel, idioma.idioma," +
+            " nivel.nivel, idiomaoferta.idIdiomaOferta," +
+            " idiomaoferta.requerido requeridoOfer," +
+            " idiomaoferta.idDetalleOfertaEmpleo as idDetalleOfertaEmpleo," +
+            " estudiosuperior.idEstudioSuperior," +
+            " estudiosuperior.estudiosSuperior, puesto.idPuesto," +
+            " nivelestudiosuperior.idNivelEstudioSuperior, nivelestudiosuperior.nivelEstudioSuperior," +
+            " areaestudio.idAreaEstudio, areaestudio.areaEstudio," +
+            " estudiosuperior.requerido requeridoEstudio," +
+            " estudiosecundario.idEstudioSecundario, estudiosecundario.estudioSecundario," +
+            " estudiosecundario.requerido requeridoSecundario," +
+            " experiencias.idExperiencias, experiencias.experiencia, experiencias.puestosExperiencia, " +
+            " experiencias.cargo, experiencias.requerido," +
+            " empresa.idEmpresa, empresa.nombreEmpresa" +
+            " from ofertaempleo" +
+            " inner join detalleofertaempleo on ofertaempleo.idDetalleOfertaEmpleo = detalleofertaempleo.idDetalleOfertaEmpleo" +
+            " inner join pais on pais.idPais = ofertaempleo.idPais" +
+            " inner join idiomaoferta on detalleofertaempleo.idIdiomaOferta = idiomaoferta.idIdiomaOferta" +
+            " inner join idiomanivel on idiomaoferta.idIdiomaNivel = idiomanivel.idIdiomaNivel" +
+            " inner join nivel on idiomanivel.idNivel = nivel.idNivel" +
+            " inner join idioma on idiomanivel.idIdioma = idioma.idIdioma" +
+            " inner join departamento on departamento.idDepartamento = ofertaempleo.idDepartamento" +
+            " inner join tipopago on tipopago.idTipoPago = detalleofertaempleo.idTipoPago" +
+            " inner join tipocontratacion on tipoContratacion.idTipoContratacion = detalleofertaempleo.idTipoContratacion" +
+            " inner join puesto on ofertaempleo.idPuesto = puesto.idPuesto" +
+            " inner join categoria on categoria.idCategoria = puesto.idCategoria" +
+            " inner join cargo on cargo.idCargo = puesto.idCargo" +
+            " inner join estudiosuperior on estudiosuperior.idEstudioSuperior = detalleofertaempleo.idEstudioSuperior" +
+            " inner join nivelEstudioSuperior on nivelEstudioSuperior.idNivelEstudioSuperior = estudiosuperior.idNivelEstudioSuperior" +
+            " inner join areaestudio on areaEstudio.idAreaEstudio = estudiosuperior.idAreaEstudio" +
+            " inner join estudiosecundario on estudiosecundario.idEstudioSecundario = detalleofertaempleo.idEstudioSecundario" +
+            " inner join experiencias on experiencias.idExperiencias = detalleofertaempleo.idExperiencias" +
+            " inner join empresa on empresa.idEmpresa = detalleofertaempleo.idEmpresa"
+          + " where ofertaempleo.activo=1 and "+tabla+"."+atributo+"='"+valor+"'";
+            
+            rs = this.getCon().prepareCall(sql).executeQuery();
+            
+            while(rs.next()){
+                    
+                Idioma idioma = new Idioma();
+                idioma.setIdioma(rs.getString("idioma"));
+                
+                NivelI nivel = new NivelI();
+                nivel.setNivelIdioma(rs.getString("nivel"));
+                
+                NivelIdioma nivelIdioma = new NivelIdioma(
+                        rs.getInt("idIdiomaNivel")
+                );
+                nivelIdioma.setIdioma(idioma);
+                nivelIdioma.setNivel(nivel);
+                
+                IdiomaOferta idiomaOferta = new IdiomaOferta();
+                idiomaOferta.setIdIdiomaOferta(rs.getInt("idIdiomaOferta"));
+                idiomaOferta.setIdiomaNivel(nivelIdioma);
+                
+                AreaEstudio1 areaEstudio = new AreaEstudio1();
+                areaEstudio.setIdAreaEstudio(rs.getInt("idAreaEstudio"));
+                areaEstudio.setAreaEstudio(rs.getString("areaEstudio"));
+                
+                NivelEstudioSuperior nivelES = new NivelEstudioSuperior();
+                nivelES.setIdNivelEstudioSuperior(rs.getInt("idNivelEstudioSuperior"));
+                nivelES.setNivelEstudioSuperior(rs.getString("nivelEstudioSuperior"));
+               
+                
+                EstudioSuperior estudioSuperior = new EstudioSuperior();
+                estudioSuperior.setIdEstudioSuperior(rs.getInt("idEstudioSuperior"));
+                estudioSuperior.setEstudiosSuperior(rs.getString("estudiosSuperior"));
+                estudioSuperior.setRequerido(rs.getInt("requeridoEstudio"));
+                estudioSuperior.setAreaEstudio(areaEstudio);
+                estudioSuperior.setNivelEstudioSuperior(nivelES);
+                
+                
+                EstudioSecundario estudioSE = new EstudioSecundario();
+                estudioSE.setIdEstudioSecundario(rs.getInt("idEstudioSecundario"));
+                estudioSE.setEstudioSecundario(rs.getString("estudioSecundario"));
+                estudioSE.setRequerido(rs.getInt("requeridoSecundario"));
+                
+                //---- ofertaEmpleo
+                Cargo cargo = new Cargo();
+                cargo.setIdCargo(rs.getInt("idCargo"));
+                cargo.setCargo(rs.getString("nombreCargo"));
+                
+                Categoria categoria = new Categoria();
+                categoria.setIdCategoria(rs.getInt("idCategoria"));
+                categoria.setCategoria(rs.getString("categoria"));
+                
+                Puesto puesto = new Puesto();
+                puesto.setIdPuesto(rs.getInt("idPuesto"));
+                puesto.setCargo(cargo);
+                puesto.setCategoria(categoria);
+                
+                Pais pais = new Pais();
+                pais.setIdPais(rs.getInt("idPais"));
+                pais.setPais(rs.getString("pais"));
+                
+                Departamento depto = new Departamento();
+                depto.setIdDepartamento(rs.getInt("idDepartamento"));
+                depto.setDepartamento(rs.getString("departamento"));
+                
+                Municipio municipio = new Municipio();
+               
+                OfertaEmpleo oferEmpleo = new OfertaEmpleo(
+                        rs.getInt("idOfertaEmpleo"),
+                        rs.getString("nombreCargo"),
+                        new DetalleOfertaEmpleo(
+                            rs.getInt("idDetalleOfertaEmpleo"),
+                            rs.getInt("numVacantes"),
+                            rs.getString("genero"),
+                            rs.getInt("edad"),
+                            rs.getInt("anioExperiencia"),
+                            rs.getInt("candidatoV"),
+                            rs.getString("descripcionPuesto"),
+                            rs.getDouble("salarioMin"),
+                            rs.getDouble("salarioMax"),
+                            idiomaOferta,
+                            estudioSuperior,
+                            estudioSE,
+                            new Experiencias(
+                                    rs.getInt("idExperiencias"),
+                                    rs.getString("experiencia"),
+                                    rs.getString("puestosExperiencia"),
+                                    rs.getString("cargo"),
+                                    rs.getInt("requerido")
+                            ),
+                            new Empresa(
+                                        rs.getInt("idEmpresa"),
+                                        rs.getString("nombreEmpresa")           
+                            ),
+                            new TipoContratacion1(
+                                    rs.getInt("idTipoContratacion"),
+                                    rs.getString("tipoContratacion")
+                            ),
+                            new TipoPago1(
+                                    rs.getInt("idTipoPago"),
+                                    rs.getString("tipoPago")
+                            )
+                        ),
+                        puesto,
+                        pais,
+                        depto,
+                        municipio
+                );//Constructor con parámetros      
+         
+                
+                lista.add(oferEmpleo); 
+            }//FINAL WHILE*/
+           
+           
+        }catch(Exception e){
+           OfertaEmpleo s = new OfertaEmpleo();
+           s.getPais().setPais(e.toString());   
+           lista.add(s);
+        }
+        
+        return lista;
+    }//FINAL MOSTRAR
+    
     public ArrayList<OfertaEmpleo> mostrarOferta(){
         ResultSet rs; 
         ArrayList<OfertaEmpleo> lista = new ArrayList();
