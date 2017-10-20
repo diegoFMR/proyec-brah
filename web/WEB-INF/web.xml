@@ -8,6 +8,10 @@
         <servlet-name>ProcesarEditarOfertaEmpleo</servlet-name>
         <servlet-class>com.controlador.ProcesarEditarOfertaEmpleo</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProcesarCategoria</servlet-name>
+        <servlet-class>com.controlador.ProcesarCategoria</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ProcesarDetalleOfertaEmpleo</servlet-name>
         <url-pattern>/procesardetalleofertaEmpleo</url-pattern>
@@ -15,6 +19,10 @@
     <servlet-mapping>
         <servlet-name>ProcesarEditarOfertaEmpleo</servlet-name>
         <url-pattern>/procesareditarofertaempleo</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProcesarCategoria</servlet-name>
+        <url-pattern>/ProcesarCategoria</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

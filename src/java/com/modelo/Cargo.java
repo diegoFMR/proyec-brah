@@ -12,6 +12,23 @@ package com.modelo;
 public class Cargo {
     private int idCargo;
     private String cargo;
+    private Categoria categoria;
+
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public Cargo(int idCargo, String cargo, Categoria categoria) {
+        this.idCargo = idCargo;
+        this.cargo = cargo;
+        this.categoria = categoria;
+    }
+    
+    
 
     public Cargo() {
     }
